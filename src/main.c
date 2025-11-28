@@ -108,4 +108,47 @@ void app_main(void)
     wifi_init_softap();
 
     init_mp3924_port();
+
+    while (true)
+    {
+        uint16_t power_status = get_register_value(POWER_STATUS);
+
+        uint16_t port1_det_cls_result = get_register_value(DET_CLS_RESULT1);
+        ESP_LOGI(TAG, "Port 1:\n\tCLSR: %u\n\t2EVNTC: %u\n\tDETR: %u\n\tPG/PEN: %d/%d",
+            port1_det_cls_result & CLSR,
+            port1_det_cls_result & TWO_EVENTC,
+            port1_det_cls_result & DETR,
+            (power_status & PG1) > 0,
+            (power_status & PEN1) > 0
+        );
+
+        uint16_t port2_det_cls_result = get_register_value(DET_CLS_RESULT2);
+        ESP_LOGI(TAG, "Port 2:\n\tCLSR: %u\n\t2EVNTC: %u\n\tDETR: %u\n\tPG/PEN: %d/%d",
+            port2_det_cls_result & CLSR,
+            port2_det_cls_result & TWO_EVENTC,
+            port2_det_cls_result & DETR,
+            (power_status & PG2) > 0,
+            (power_status & PEN2) > 0
+        );
+
+        uint16_t port3_det_cls_result = get_register_value(DET_CLS_RESULT3);
+        ESP_LOGI(TAG, "Port 3:\n\tCLSR: %u\n\t2EVNTC: %u\n\tDETR: %u\n\tPG/PEN: %d/%d",
+            port3_det_cls_result & CLSR,
+            port3_det_cls_result & TWO_EVENTC,
+            port3_det_cls_result & DETR,
+            (power_status & PG3) > 0,
+            (power_status & PEN3) > 0
+        );
+
+        uint16_t port4_det_cls_result = get_register_value(DET_CLS_RESULT4);
+        ESP_LOGI(TAG, "Port 4:\n\tCLSR: %u\n\t2EVNTC: %u\n\tDETR: %u\n\tPG/PEN: %d/%d",
+            port4_det_cls_result & CLSR,
+            port4_det_cls_result & TWO_EVENTC,
+            port4_det_cls_result & DETR,
+            (power_status & PG4) > 0,
+            (power_status & PEN4) > 0
+        );
+        
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+    }
 }
