@@ -247,4 +247,7 @@ void set_register_value(mp3924_register reg, uint8_t value);
 
 uint16_t get_register_value(mp3924_register reg);
 
+esp_err_t enable_port(uint8_t port);
+esp_err_t disable_port(uint8_t port);
+
 #endif

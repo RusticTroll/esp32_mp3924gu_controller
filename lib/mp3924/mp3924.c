@@ -435,8 +435,10 @@ void init_mp3924_port()
     ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle, &mp3924_conf, &mp3924_handle));
 
     ESP_LOGI(TAG, "MP3924 I2C connection established.");
-    set_register_value(MODE_SETTING, 0xFF);
-    set_register_value(DET_CLS_ENABLE, 0xFF);
+    for (uint8_t port = 1; port < 5; port++)
+    {
+        enable_port(port);
+    }
     set_register_value(DISCONNECT_ENABLE, 0x0F);
     set_register_value(TWO_EVENT_CLASS_FIVE_ENABLE, 0x0F);
     set_register_value(GENERAL_ENABLE_CONTROL, PMAXEN | ADCEN);
@@ -460,4 +462,78 @@ uint16_t get_register_value(mp3924_register reg) {
     }
 
     return return_value;
+}
+
+esp_err_t enable_port(uint8_t port)
+{
+    uint8_t original_mode_setting = (uint8_t)get_register_value(MODE_SETTING);
+    uint8_t new_mode_setting = 0;
+
+    switch (port)
+    {
+        case 1:
+        {
+            new_mode_setting = original_mode_setting | MODE_1;
+            break;
+        }
+        case 2:
+        {
+            new_mode_setting = original_mode_setting | MODE_2;
+            break;
+        }
+        case 3:
+        {
+            new_mode_setting = original_mode_setting | MODE_3;
+            break;
+        }
+        case 4:
+        {
+            new_mode_setting = original_mode_setting | MODE_4;
+            break;
+        }
+        default:
+        {
+            return ESP_ERR_INVALID_ARG;
+        }
+    }
+
+    set_register_value(MODE_SETTING, new_mode_setting);
+    return ESP_OK;
+}
+
+esp_err_t disable_port(uint8_t port)
+{
+    uint8_t original_mode_setting = (uint8_t)get_register_value(MODE_SETTING);
+    uint8_t new_mode_setting = 0;
+
+    switch (port)
+    {
+        case 1:
+        {
+            new_mode_setting = original_mode_setting & !MODE_1;
+            break;
+        }
+        case 2:
+        {
+            new_mode_setting = original_mode_setting & !MODE_2;
+            break;
+        }
+        case 3:
+        {
+            new_mode_setting = original_mode_setting & !MODE_3;
+            break;
+        }
+        case 4:
+        {
+            new_mode_setting = original_mode_setting & !MODE_4;
+            break;
+        }
+        default:
+        {
+            return ESP_ERR_INVALID_ARG;
+        }
+    }
+
+    set_register_value(MODE_SETTING, new_mode_setting);
+    return ESP_OK;
 }
